@@ -58,7 +58,7 @@ fn draw_search_bar(f: &mut Frame, app: &App, area: Rect) {
             Block::default()
                 .borders(Borders::ALL)
                 .border_style(Style::default().fg(border_color))
-                .title(Span::styled(" rFind ", Style::default().fg(ACCENT).bold())),
+                .title(Span::styled(" rind ", Style::default().fg(ACCENT).bold())),
         );
 
     f.render_widget(search, area);

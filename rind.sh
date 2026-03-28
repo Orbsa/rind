@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Shell wrapper for rfind - source this or add as a function to your shell rc
-# Usage: rfind [args...]
+# Shell wrapper for rind - source this or add as a function to your shell rc
+# Usage: rind [args...]
 
-rfind() {
+rind() {
     local output
-    output=$("$(dirname "${BASH_SOURCE[0]}")/target/release/rfind" "$@")
+    output=$("$(dirname "${BASH_SOURCE[0]}")/target/release/rind" "$@")
     local exit_code=$?
 
     if [[ "$output" == __RFIND_CD__:* ]]; then
         local dir="${output#__RFIND_CD__:}"
-        cd "$dir" || echo "rfind: failed to cd to $dir"
+        cd "$dir" || echo "rind: failed to cd to $dir"
     elif [[ -n "$output" ]]; then
         echo "$output"
     fi

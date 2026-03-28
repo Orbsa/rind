@@ -1,5 +1,5 @@
 {
-  description = "rFind - TUI wrapper around plocate";
+  description = "rind - TUI wrapper around plocate";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -19,8 +19,8 @@
           pkgs.yazi
         ];
 
-        rfind = pkgs.rustPlatform.buildRustPackage {
-          pname = "rfind";
+        rind = pkgs.rustPlatform.buildRustPackage {
+          pname = "rind";
           version = "0.1.0";
           src = pkgs.lib.cleanSource ./.;
           cargoLock.lockFile = ./Cargo.lock;
@@ -28,12 +28,12 @@
           nativeBuildInputs = [ pkgs.makeWrapper ];
 
           postInstall = ''
-            wrapProgram $out/bin/rfind \
+            wrapProgram $out/bin/rind \
               --suffix PATH : ${pkgs.lib.makeBinPath runtimeDeps}
           '';
         };
       in {
-        packages.default = rfind;
+        packages.default = rind;
 
         devShells.default = pkgs.mkShell {
           buildInputs = [

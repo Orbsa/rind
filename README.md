@@ -1,4 +1,4 @@
-# rFind
+# rind
 
 TUI wrapper around plocate for interactive file search with vim-like keybindings, syntax-highlighted previews, and directory browsing.
 
@@ -28,14 +28,14 @@ Search queries are POSIX regex (`\.rs$`, `src.*main`, etc).
 
 ### Shell wrapper
 
-rfind can't cd your shell directly. Source the wrapper for your shell:
+rind can't cd your shell directly. Source the wrapper for your shell:
 
 ```bash
 # bash
-source rfind.sh
+source rind.sh
 
 # fish
-source rfind.fish
+source rind.fish
 ```
 
 ## Requirements
