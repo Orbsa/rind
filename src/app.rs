@@ -7,6 +7,7 @@ use std::process::Command;
 pub enum Mode {
     Normal,
     Insert,
+    Help,
 }
 
 pub enum ExitAction {

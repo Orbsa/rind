@@ -67,10 +67,10 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App)
             app::Mode::Normal => match key.code {
                 KeyCode::Char('q') => return Ok(ExitAction::Quit),
                 KeyCode::Char('i') => app.mode = app::Mode::Insert,
-                KeyCode::Char('j') => app.move_down(),
-                KeyCode::Char('k') => app.move_up(),
-                KeyCode::Char('h') => app.move_path_left(),
-                KeyCode::Char('l') => app.move_path_right(),
+                KeyCode::Char('j') | KeyCode::Down => app.move_down(),
+                KeyCode::Char('k') | KeyCode::Up => app.move_up(),
+                KeyCode::Char('h') | KeyCode::Left => app.move_path_left(),
+                KeyCode::Char('l') | KeyCode::Right => app.move_path_right(),
                 KeyCode::Char('g') => app.select_first(),
                 KeyCode::Char('G') => app.select_last(),
                 KeyCode::Char('y') => {
@@ -83,7 +83,14 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App)
                         return Ok(action);
                     }
                 }
+                KeyCode::Char('?') => app.mode = app::Mode::Help,
                 KeyCode::Esc => return Ok(ExitAction::Quit),
+                _ => {}
+            },
+            app::Mode::Help => match key.code {
+                KeyCode::Char('?') | KeyCode::Esc | KeyCode::Char('q') => {
+                    app.mode = app::Mode::Normal;
+                }
                 _ => {}
             },
             app::Mode::Insert => match key.code {

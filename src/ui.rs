@@ -1,5 +1,5 @@
 use ratatui::prelude::*;
-use ratatui::widgets::{Block, Borders, List, ListItem, Paragraph, Wrap};
+use ratatui::widgets::{Block, Borders, Clear, List, ListItem, Paragraph, Wrap};
 use ratatui::Frame;
 
 use crate::app::{self, App, Mode};
@@ -31,6 +31,18 @@ pub fn draw(f: &mut Frame, app: &App) {
 
     draw_search_bar(f, app, chunks[0]);
     draw_results(f, app, chunks[1]);
+
+    // "?" hint bottom-right
+    if app.mode != Mode::Help {
+        let hint = Span::styled(" ? ", Style::default().fg(TEXT_DIM));
+        let area = f.area();
+        let hint_area = Rect::new(area.width.saturating_sub(4), area.height.saturating_sub(1), 3, 1);
+        f.render_widget(Paragraph::new(hint), hint_area);
+    }
+
+    if app.mode == Mode::Help {
+        draw_help_modal(f);
+    }
 }
 
 fn draw_search_bar(f: &mut Frame, app: &App, area: Rect) {
@@ -40,7 +52,7 @@ fn draw_search_bar(f: &mut Frame, app: &App, area: Rect) {
             Style::default().fg(HIGHLIGHT_FG).bg(YELLOW).bold(),
             YELLOW,
         ),
-        Mode::Normal => (
+        Mode::Normal | Mode::Help => (
             " NORMAL ",
             Style::default().fg(HIGHLIGHT_FG).bg(ACCENT).bold(),
             ACCENT,
@@ -219,4 +231,71 @@ fn draw_preview(f: &mut Frame, app: &App, area: Rect) {
         );
 
     f.render_widget(preview, area);
+}
+
+fn draw_help_modal(f: &mut Frame) {
+    let area = f.area();
+    let width = 40u16.min(area.width.saturating_sub(4));
+    let height = 16u16.min(area.height.saturating_sub(4));
+    let x = (area.width.saturating_sub(width)) / 2;
+    let y = (area.height.saturating_sub(height)) / 2;
+    let modal_area = Rect::new(x, y, width, height);
+
+    f.render_widget(Clear, modal_area);
+
+    let help_lines = vec![
+        Line::from(vec![
+            Span::styled("i", Style::default().fg(ACCENT).bold()),
+            Span::styled("         insert (search) mode", Style::default().fg(TEXT)),
+        ]),
+        Line::from(vec![
+            Span::styled("Esc", Style::default().fg(ACCENT).bold()),
+            Span::styled("       normal mode / quit", Style::default().fg(TEXT)),
+        ]),
+        Line::from(vec![
+            Span::styled("Enter", Style::default().fg(ACCENT).bold()),
+            Span::styled("     cd dir / open file in vim", Style::default().fg(TEXT)),
+        ]),
+        Line::from(vec![
+            Span::styled("j/k  ↑/↓", Style::default().fg(ACCENT).bold()),
+            Span::styled(" navigate results", Style::default().fg(TEXT)),
+        ]),
+        Line::from(vec![
+            Span::styled("h/l  ←/→", Style::default().fg(ACCENT).bold()),
+            Span::styled(" navigate path segments", Style::default().fg(TEXT)),
+        ]),
+        Line::from(vec![
+            Span::styled("g/G", Style::default().fg(ACCENT).bold()),
+            Span::styled("       first / last result", Style::default().fg(TEXT)),
+        ]),
+        Line::from(vec![
+            Span::styled("y", Style::default().fg(ACCENT).bold()),
+            Span::styled("         open in yazi", Style::default().fg(TEXT)),
+        ]),
+        Line::from(vec![
+            Span::styled("q", Style::default().fg(ACCENT).bold()),
+            Span::styled("         quit", Style::default().fg(TEXT)),
+        ]),
+        Line::raw(""),
+        Line::from(vec![
+            Span::styled("Search uses POSIX regex", Style::default().fg(TEXT_DIM)),
+        ]),
+        Line::raw(""),
+        Line::from(vec![
+            Span::styled("Press ", Style::default().fg(TEXT_DIM)),
+            Span::styled("?", Style::default().fg(ACCENT).bold()),
+            Span::styled(" or ", Style::default().fg(TEXT_DIM)),
+            Span::styled("Esc", Style::default().fg(ACCENT).bold()),
+            Span::styled(" to close", Style::default().fg(TEXT_DIM)),
+        ]),
+    ];
+
+    let help = Paragraph::new(help_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .border_style(Style::default().fg(ACCENT))
+            .title(Span::styled(" Keybindings ", Style::default().fg(ACCENT).bold())),
+    );
+
+    f.render_widget(help, modal_area);
 }
